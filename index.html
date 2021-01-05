@@ -1,0 +1,168 @@
+<!-- clock widget for Notion -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.16.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.9/moment-timezone-with-data-2010-2020.min.js"></script>
+
+    <title>Clock widget</title>
+
+    <!-- style -->
+    <style>
+      body {
+        margin: 0;
+        font-family: "Inconsolata", monospace;
+        color: #fff;
+      }
+
+      .background-gradient {
+        position: absolute;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+      }
+
+      .fixed-sidebar-header {
+        padding: 5%;
+        background-color: rgba(3, 34, 63, 0.4);
+        top: 0;
+        left: 0;
+        bottom: 0;
+        border-right: 1px solid rgba(235, 236, 243);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+        min-width: 250px;
+      }
+
+      h1 {
+        text-transform: uppercase;
+        font-size: 2em;
+        line-height: 1.8;
+        letter-spacing: 4px;
+      }
+
+      .time-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 3;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      li {
+        font-size: 1em;
+        border-bottom: 1px solid rgba(235, 236, 243, 0.2);
+        padding: 10px 40px;
+        display: flex;
+        align-items: flex-end;
+        flex: 1;
+        max-height: 100px;
+      }
+
+      .digital-clock {
+        font-family: "Inconsolata", monospace;
+        font-weight: 400;
+        font-size: 1.8em;
+        flex: 3;
+      }
+
+      .city-name {
+        flex: 1;
+        text-transform: uppercase;
+        font-size: 2em;
+        min-width: 230px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- main app body -->
+    <div class="background-gradient">
+      <section class="time-wrapper">
+        <ul class="time"></ul>
+      </section>
+    </div>
+
+    <!-- script here -->
+    <script>
+      console.log(moment.tz("Europe/London"));
+      var timezones = [
+        {
+          name: "California [PDT]",
+          zone: "America/Los_Angeles",
+        },
+        {
+          name: "Colombia [COT]",
+          zone: "America/Bogota",
+        },
+        {
+          name: "Florianopolis [BRT]",
+          zone: "America/Sao_Paulo",
+        },
+        {
+          name: "Manchester [GMT]",
+          zone: "Europe/London",
+        },
+      ];
+
+      function hourBgColour(hour) {
+        if (hour < 5) {
+          return "#F2CEDB";
+        } else if (hour < 11) {
+          return "#F2B3DC";
+        } else if (hour < 15) {
+          return "#A47ABF";
+        } else if (hour < 18) {
+          return "#3F3CA6";
+        } else if (hour <= 20) {
+          return "#494EA6";
+        } else {
+          return "#494EA6";
+        }
+      }
+
+      function updateClock() {
+        const now = moment();
+        const hour = [];
+        $(".time").empty();
+
+        for (var i = 0; i < timezones.length; i++) {
+          console.log(timezones[i].zone);
+          let currentTime = now.tz(timezones[i].zone).format("HH:mm");
+          let cityName = timezones[i].name;
+          $(".time").append(
+            `<li> <span class='city-name'> ${cityName} </span> <span class='digital-clock'> ${currentTime} </span></li>`
+          );
+
+          hour.push(hourBgColour(currentTime.split(":")[0]));
+
+          $(".background-gradient").css(
+            "background",
+            "linear-gradient(" + hour.join(",") + ")"
+          );
+        }
+      }
+
+      updateClock();
+      setInterval(updateClock, 60000);
+    </script>
+  </body>
+</html>
